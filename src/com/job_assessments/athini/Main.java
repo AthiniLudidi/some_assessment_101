@@ -9,12 +9,30 @@ public class Main {
     }
 
 
-    private static void tweetAlgorithm(File users, File tweets){
+    private static void tweetAlgorithm(File users, File tweetsFile){
 
         Map<String, ArrayList<String>> userConnections=getUserConnections(users);
-        Map<String, ArrayList<String>> userTwits=getUsersTweets(tweets);
+        Map<String, ArrayList<String>> userTwits=getUsersTweets(tweetsFile);
 
-        
+        userConnections.forEach((user, connections) -> {
+            System.out.println(user);
+
+            // first print all the tweets by this user
+            if (userTwits.containsKey(user)) {
+                userTwits.get(user).forEach(tweet->{
+                    System.out.println("\t@" + user + ": " + tweet);
+                });
+            }
+
+            // now print all the tweets by the users this user follows
+            connections.forEach(connection ->
+            {
+                if (userTwits.containsKey(connection)) {
+                    System.out.println("\t@" + connection + ": " + userTwits.get(connection));
+                }
+            });
+
+        });
 
 
     }
@@ -24,7 +42,7 @@ public class Main {
         Map<String, ArrayList<String>> usersTweets=new HashMap<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line="";
+            String line;
             while ((line= reader.readLine())!=null){
                 //System.out.println(line);
                 String userName=line.substring(0, line.indexOf('>'));
@@ -49,24 +67,36 @@ public class Main {
         return usersTweets;
     }
 
-    // read the users connections file, and purpulate a map/dictionary
+    // read the users connections file, and populate a map/dictionary
     private static Map<String, ArrayList<String>> getUserConnections(File file){
         Map<String, ArrayList<String>> usersConnections=new HashMap<>();
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
 
-            String line="";
+            String line;
             while ((line=reader.readLine())!=null){
                 String user=line.substring(0, line.indexOf(" "));
-
                 String follows_space="follows ";
-
                 int followersFirstIndex=line.indexOf(" ")+follows_space.length();
+                String [] followsArray=line.substring(followersFirstIndex).split(",");
 
-                ArrayList<String> followers=new ArrayList<>();
-                Collections.addAll(followers, line.substring(followersFirstIndex).split(","));
-                usersConnections.put(user,followers);
+
+                if(!usersConnections.containsKey(user)){
+                    ArrayList<String> followers=new ArrayList<>();
+                    Collections.addAll(followers, followsArray);
+                    usersConnections.put(user,followers);
+                }
+                else{
+                    ArrayList<String> current=usersConnections.get(user);
+                    for(int x=0; x<=followsArray.length-1;x++){
+                        if(!current.contains(followsArray[x])){
+                            current.add(followsArray[x]);
+                        }
+                    }
+                    usersConnections.replace(user,current);
+                }
+
             }
         }
         catch (IOException e){
