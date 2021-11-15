@@ -15,7 +15,14 @@ public class Main {
         Map<String, ArrayList<String>> userTwits=getUsersTweets(tweetsFile);
 
         userConnections.forEach((user, connections) -> {
-            System.out.println(user);
+            if(userTwits.containsKey(user)) {
+                System.out.println(user);
+            }
+            connections.forEach(conn -> {
+                if(userTwits.containsKey(conn)){
+                    System.out.println(conn);
+                }
+            });
 
             // first print all the tweets by this user
             if (userTwits.containsKey(user)) {
@@ -38,8 +45,8 @@ public class Main {
     }
 
     // read the users tweets file, and populate a map/dictionary
-    private static Map<String, ArrayList<String>> getUsersTweets(File file){
-        Map<String, ArrayList<String>> usersTweets=new HashMap<>();
+    private static SortedMap<String, ArrayList<String>> getUsersTweets(File file){
+        SortedMap<String, ArrayList<String>> usersTweets=new TreeMap<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
@@ -68,8 +75,8 @@ public class Main {
     }
 
     // read the users connections file, and populate a map/dictionary
-    private static Map<String, ArrayList<String>> getUserConnections(File file){
-        Map<String, ArrayList<String>> usersConnections=new HashMap<>();
+    private static SortedMap<String, ArrayList<String>> getUserConnections(File file){
+        SortedMap<String, ArrayList<String>> usersConnections=new TreeMap<>();
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
