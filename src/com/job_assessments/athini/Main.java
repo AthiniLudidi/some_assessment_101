@@ -5,7 +5,19 @@ import java.util.*;
 
 public class Main {
     public static void main(String [] args){
-        System.out.println("Hello Allan Gray Assessment");
+        //System.out.println("Hello Allan Gray Assessment");
+
+        File userTweetsFile=new File("C:\\Users\\user\\Documents\\My_Projects\\job_assessments\\some_assessment_101\\data_files\\tweet.txt");
+        File userConnectionsFile=new File("C:\\Users\\user\\Documents\\My_Projects\\job_assessments\\some_assessment_101\\data_files\\user.txt");
+        SortedMap<String, ArrayList<String>> userstweets=getUsersTweets(userTweetsFile);
+
+        //System.out.println(userstweets);
+
+        SortedMap<String, ArrayList<String>> userConnectionPairs=getUserConnections(userConnectionsFile);
+
+        //System.out.println(userConnectionPairs);
+
+        tweetAlgorithm(userConnectionsFile, userTweetsFile);
     }
 
 
