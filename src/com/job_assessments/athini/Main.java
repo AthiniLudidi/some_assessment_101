@@ -99,18 +99,19 @@ public class Main {
         getUsersTweetsV2(tweeters,tweets,tweetsFile);
 
         userConnections.forEach((user, connections)->{
-            SortedSet<String> usersArrayList=new TreeSet<>();
-            usersArrayList.add(user);
-            usersArrayList.addAll(connections);
+            SortedSet<String> sortedUserConnections=new TreeSet<>();
+            sortedUserConnections.add(user);
+            sortedUserConnections.addAll(connections);
 
-            // works like a charm, just need to stop the duplicates, and display names in order
-            for(int x=0; x<=tweeters.size()-1; x++) {
-                if (usersArrayList.contains(tweeters.get(x)))
-                    System.out.println(tweeters.get(x));
-            }
+            // first display names of users (connections) who tweeted
+            sortedUserConnections.forEach(u-> {
+                if(tweeters.contains(u))
+                    System.out.println(u);
+            });
 
+            // now display the tweets, in the order they appear
             for(int x=0; x<=tweets.size()-1; x++) {
-                if (usersArrayList.contains(tweeters.get(x)))
+                if (sortedUserConnections.contains(tweeters.get(x)))
                     System.out.println("\t@" + tweeters.get(x) + ": " + tweets.get(x));
             }
         });
