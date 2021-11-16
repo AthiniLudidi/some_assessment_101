@@ -11,11 +11,11 @@ public class Main {
         File userConnectionsFile=new File("C:\\Users\\user\\Documents\\My_Projects\\job_assessments\\some_assessment_101\\data_files\\user.txt");
         SortedMap<String, ArrayList<String>> userstweets=getUsersTweets(userTweetsFile);
 
-        //System.out.println(userstweets);
+        System.out.println(userstweets);
 
         SortedMap<String, ArrayList<String>> userConnectionPairs=getUserConnections(userConnectionsFile);
 
-        //System.out.println(userConnectionPairs);
+        System.out.println(userConnectionPairs);
 
         tweetAlgorithm(userConnectionsFile, userTweetsFile);
     }
@@ -47,7 +47,9 @@ public class Main {
             connections.forEach(connection ->
             {
                 if (userTwits.containsKey(connection)) {
-                    System.out.println("\t@" + connection + ": " + userTwits.get(connection));
+                    userTwits.get(connection).forEach(curTwit ->{
+                        System.out.println("\t@" + connection + ": " + curTwit);
+                    });
                 }
             });
 
@@ -67,15 +69,18 @@ public class Main {
                 String userName=line.substring(0, line.indexOf('>'));
                 String tweet=line.substring(line.indexOf('>')+2);
 
-                if(!usersTweets.containsKey(userName)){
-                   ArrayList<String> tweets=new ArrayList<>();
-                   tweets.add(tweet);
-                   usersTweets.put(userName,tweets);
-                }
-                else{
-                    ArrayList<String> tweets=usersTweets.get(userName);
-                    tweets.add(tweet);
-                    usersTweets.replace(userName,tweets);
+                // ensure only twits with <= characters are saved
+                if(tweet.length()<=140){
+                    if(!usersTweets.containsKey(userName)){
+                        ArrayList<String> tweets=new ArrayList<>();
+                        tweets.add(tweet);
+                        usersTweets.put(userName,tweets);
+                    }
+                    else{
+                        ArrayList<String> tweets=usersTweets.get(userName);
+                        tweets.add(tweet);
+                        usersTweets.replace(userName,tweets);
+                    }
                 }
 
             }
@@ -99,6 +104,10 @@ public class Main {
                 String follows_space="follows ";
                 int followersFirstIndex=line.indexOf(" ")+follows_space.length();
                 String [] followsArray=line.substring(followersFirstIndex).split(",");
+
+                //now remove the spaces around the names in the array
+                for(int x=0; x<=followsArray.length-1;x++)
+                    followsArray[x]=followsArray[x].trim();
 
 
                 if(!usersConnections.containsKey(user)){
