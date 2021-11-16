@@ -17,10 +17,13 @@ public class Main {
 
         System.out.println(userConnectionPairs);
 
-        tweetAlgorithm(userConnectionsFile, userTweetsFile);
+        //tweetAlgorithm(userConnectionsFile, userTweetsFile);
+
+        tweetAlgorithmV2(userConnectionsFile, userTweetsFile);
     }
 
 
+    // main algorithm for displaying tweets
     private static void tweetAlgorithm(File users, File tweetsFile){
 
         Map<String, ArrayList<String>> userConnections=getUserConnections(users);
@@ -53,6 +56,34 @@ public class Main {
                 }
             });
 
+        });
+
+
+    }
+
+    // v2 function for displaying the tweets- uses sorted sets
+    private static void tweetAlgorithmV2(File usersFile, File tweetsFile){
+        Map<String, ArrayList<String>> userConnections=getUserConnections(usersFile);
+        Map<String, ArrayList<String>> userTwits=getUsersTweets(tweetsFile);
+
+        userConnections.forEach((user, connections)->{
+            SortedSet<String> sortedUsers=new TreeSet<>();
+            sortedUsers.add(user);
+            sortedUsers.addAll(connections);
+
+            sortedUsers.forEach(u->{
+                if(userTwits.containsKey(u)) {
+                    System.out.println(u);
+                }
+            });
+
+            sortedUsers.forEach(curUser->{
+                if (userTwits.containsKey(curUser)) {
+                    userTwits.get(curUser).forEach(tweet->{
+                        System.out.println("\t@" + curUser + ": " + tweet);
+                    });
+                }
+            });
         });
 
 
