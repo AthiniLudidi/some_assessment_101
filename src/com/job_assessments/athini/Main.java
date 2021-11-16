@@ -19,7 +19,9 @@ public class Main {
 
         //tweetAlgorithm(userConnectionsFile, userTweetsFile);
 
-        tweetAlgorithmV2(userConnectionsFile, userTweetsFile);
+       // tweetAlgorithmV2(userConnectionsFile, userTweetsFile);
+
+        tweetAlgorithmV3(userConnectionsFile,userTweetsFile);
     }
 
 
@@ -89,6 +91,31 @@ public class Main {
 
     }
 
+    // v3 function for displaying the tweets- uses sorted sets
+    private static void tweetAlgorithmV3(File usersFile, File tweetsFile){
+        Map<String, ArrayList<String>> userConnections=getUserConnections(usersFile);
+        ArrayList<String> tweeters=new ArrayList<>();
+        ArrayList<String> tweets=new ArrayList<>();
+        getUsersTweetsV2(tweeters,tweets,tweetsFile);
+
+        userConnections.forEach((user, connections)->{
+            SortedSet<String> usersArrayList=new TreeSet<>();
+            usersArrayList.add(user);
+            usersArrayList.addAll(connections);
+
+            // works like a charm, just need to stop the duplicates, and display names in order
+            for(int x=0; x<=tweeters.size()-1; x++) {
+                if (usersArrayList.contains(tweeters.get(x)))
+                    System.out.println(tweeters.get(x));
+            }
+
+            for(int x=0; x<=tweets.size()-1; x++) {
+                if (usersArrayList.contains(tweeters.get(x)))
+                    System.out.println("\t@" + tweeters.get(x) + ": " + tweets.get(x));
+            }
+        });
+    }
+
     // read the users tweets file, and populate a map/dictionary
     private static SortedMap<String, ArrayList<String>> getUsersTweets(File file){
         SortedMap<String, ArrayList<String>> usersTweets=new TreeMap<>();
@@ -120,6 +147,25 @@ public class Main {
         }
 
         return usersTweets;
+    }
+
+    // v2 of reading users tweets and all
+    private static void getUsersTweetsV2(ArrayList<String> tweeters, ArrayList<String> tweets, File file){
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line= reader.readLine())!=null){
+                String userName=line.substring(0, line.indexOf('>'));
+                String tweet=line.substring(line.indexOf('>')+2);
+
+                // ensure only twits with <= characters are saved
+                if(tweet.length()<=140){
+                    tweeters.add(userName);
+                    tweets.add(tweet);
+                }
+            }
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // read the users connections file, and populate a map/dictionary
