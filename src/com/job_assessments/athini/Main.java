@@ -13,7 +13,7 @@ public class Main {
 
         SortedMap<String, ArrayList<String>> userConnectionPairs= loadUsersAndTheirConnections(userConnectionsFile);
 
-        System.out.println(userConnectionPairs);
+        //System.out.println(userConnectionPairs);
 
 
         tweetsFeedAlgorithm(userConnectionsFile,userTweetsFile);
@@ -64,6 +64,10 @@ public class Main {
      * @param file - a text file containing ordered users tweets
      * */
     private static void loadUsersTweets(ArrayList<String> tweeters, ArrayList<String> tweets, File file){
+        // abort with an exception if the provided file is null
+        if(file==null)
+            throw new NullPointerException();
+
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line= reader.readLine())!=null){
@@ -76,7 +80,8 @@ public class Main {
                     tweets.add(tweet);
                 }
             }
-        }catch(Exception e) {
+        }
+        catch(IOException e){
             e.printStackTrace();
         }
     }
@@ -85,7 +90,10 @@ public class Main {
      * @param file - the text file containing users and the people they follow
      * @return - a Map containing use-connections pairs
      * */
-    private static SortedMap<String, ArrayList<String>> loadUsersAndTheirConnections(File file){
+    public static SortedMap<String, ArrayList<String>> loadUsersAndTheirConnections(File file){
+        if(file==null)
+            throw new NullPointerException();
+
         SortedMap<String, ArrayList<String>> usersConnections=new TreeMap<>();
 
         try {
@@ -121,9 +129,9 @@ public class Main {
             }
         }
         catch (IOException e){
+            System.out.println("Invalid filename or location. Please review and try again\n");
             e.printStackTrace();
         }
-
         return usersConnections;
     }
 }
